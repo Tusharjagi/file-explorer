@@ -29,6 +29,51 @@ export const sideMenuItems = [
   },
 ];
 
+export const BUTTONS_CONFIG = (
+  selectedFolderId,
+  handleClickRename,
+  dispatch,
+  setOpen,
+  addFolder,
+  duplicateFolder,
+  deleteFolder
+) =>
+  [
+    {
+      id: "refresh",
+      name: "Refresh",
+      handleOnClick: () => window.location.reload(),
+    },
+    {
+      id: "new-folder",
+      name: "New Folder",
+      handleOnClick: () => {
+        dispatch(addFolder());
+        setOpen(false);
+      },
+    },
+    selectedFolderId && {
+      id: "rename",
+      name: "Rename",
+      handleOnClick: handleClickRename,
+    },
+    selectedFolderId && {
+      id: "duplicate",
+      name: "Duplicate",
+      handleOnClick: () => dispatch(duplicateFolder()),
+    },
+    selectedFolderId && {
+      id: "delete",
+      name: "Delete",
+      handleOnClick: () => {
+        dispatch(deleteFolder());
+        setOpen(false);
+      },
+    },
+    { id: "copy", name: "Copy" },
+    { id: "cut", name: "Cut" },
+  ].filter(Boolean);
+
 export const loadFolders = () => {
   const savedFolders = localStorage.getItem("folders");
   return savedFolders ? JSON.parse(savedFolders) : [];
