@@ -5,6 +5,13 @@ export const StyleMainContainer = styled("div")({
   display: "flex",
   gap: "1rem",
   flexWrap: "wrap",
+  ".folder_name": {
+    textAlign: "center",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    width: "84px",
+    textOverflow: "ellipsis",
+  },
 });
 
 export const StyleButton = styled(Button)({

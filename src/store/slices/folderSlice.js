@@ -4,6 +4,8 @@ import { loadFolders, storeFolders } from "../../utils/common";
 const initialState = {
   folders: loadFolders(),
   selectedFolderId: null,
+  copyIndex: 1,
+  lastDuplicatedFolderId: null,
 };
 
 const folderSlice = createSlice({
@@ -39,6 +41,30 @@ const folderSlice = createSlice({
         storeFolders(state.folders);
       }
     },
+    duplicateFolder: (state) => {
+      const folderToDuplicate = state.folders.find(
+        (folder) => folder.id === state.selectedFolderId
+      );
+      if (!folderToDuplicate) return;
+
+      if (state.lastDuplicatedFolderId !== folderToDuplicate.id) {
+        state.copyIndex = 1;
+        state.lastDuplicatedFolderId = folderToDuplicate.id;
+      }
+
+      let baseName = folderToDuplicate.name.replace(/_\d+$/, "");
+      let newName = `${baseName}_${state.copyIndex}`;
+
+      state.copyIndex++;
+
+      const duplicatedFolder = {
+        id: Date.now().toString(),
+        name: newName,
+      };
+
+      state.folders.push(duplicatedFolder);
+      storeFolders(state.folders);
+    },
   },
 });
 
@@ -48,6 +74,7 @@ export const {
   selectFolder,
   deselectFolder,
   renameFolder,
+  duplicateFolder,
 } = folderSlice.actions;
 
 export default folderSlice.reducer;

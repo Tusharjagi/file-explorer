@@ -7,6 +7,7 @@ import {
   selectFolder,
   deselectFolder,
   renameFolder,
+  duplicateFolder,
 } from "../../../store/slices/folderSlice";
 import { StyleButton, StyledBox, StyleMainContainer } from "./index.styled";
 
@@ -42,6 +43,11 @@ export default function MainContainer() {
       handleOnClick: handleClickRename,
     },
     selectedFolderId && {
+      id: "duplicate",
+      name: "Duplicate",
+      handleOnClick: handleDuplicate,
+    },
+    selectedFolderId && {
       id: "delete",
       name: "Delete",
       handleOnClick: () => {
@@ -52,6 +58,10 @@ export default function MainContainer() {
     { id: "copy", name: "Copy" },
     { id: "cut", name: "Cut" },
   ].filter(Boolean);
+
+  function handleDuplicate() {
+    dispatch(duplicateFolder());
+  }
 
   function handleClickRename() {
     setRenameInput(true);
@@ -148,7 +158,7 @@ export default function MainContainer() {
               onChange={folderNameChange}
             />
           ) : (
-            <span style={{ textAlign: "center" }}>{folder.name}</span>
+            <span className="folder_name">{folder.name}</span>
           )}
         </Box>
       ))}
