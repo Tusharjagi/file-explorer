@@ -78,7 +78,13 @@ export default function MainContainer() {
       {folders.map((folder) => (
         <Box
           key={folder.id}
-          sx={{ display: "grid" }}
+          sx={{
+            display: "grid",
+            padding: "8px",
+            borderRadius: "8px",
+            background:
+              selectedFolderId === folder.id ? "var(--tran-blue)" : "",
+          }}
           onContextMenu={(e) => handleContextMenu(e, folder.id)}
         >
           <span>
