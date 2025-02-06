@@ -126,6 +126,7 @@ export default function Folder({
           ? "var(--tran-blue)"
           : "",
         opacity: isDragging ? 0.5 : 1,
+        height: "14%",
       }}
       id={index}
       onContextMenu={(e) => handleContextMenu(e, folder.id)}

@@ -43,8 +43,10 @@ export default function MainContainer() {
     }
   };
 
-  const handleContextMenu = () => {
-    setOpen(false);
+  const handleContextMenu = (event) => {
+    event.preventDefault();
+    setPosition({ x: event.clientX, y: event.clientY });
+    setOpen(true);
   };
 
   useEffect(() => {
@@ -70,7 +72,11 @@ export default function MainContainer() {
   });
 
   return (
-    <StyleMainContainer ref={dropRef}>
+    <StyleMainContainer
+      ref={dropRef}
+      onContextMenu={handleContextMenu}
+      style={{ height: "90%", width: "90%" }}
+    >
       {folders.map((folder, index) => (
         <Folder
           key={folder.id}
@@ -86,12 +92,7 @@ export default function MainContainer() {
         />
       ))}
 
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        hideBackdrop
-        onContextMenu={handleContextMenu}
-      >
+      <Modal open={open} onClose={() => setOpen(false)} hideBackdrop>
         <StyledBox ref={boxRef} sx={{ top: position.y, left: position.x }}>
           {BUTTONS_CONFIG(
             selectedFolderId,
