@@ -14,7 +14,11 @@ export default function MainContainer() {
   const { folders, selectedFolderId } = useSelector((state) => state.folder);
 
   const boxRef = useRef();
+  const folderRef = useRef();
+  const inputRef = useRef();
+
   const [open, setOpen] = useState(false);
+  const [renameInput, setRenameInput] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const BUTTONS = [
@@ -31,7 +35,11 @@ export default function MainContainer() {
         setOpen(false);
       },
     },
-    { id: "rename", name: "Rename" },
+    selectedFolderId && {
+      id: "rename",
+      name: "Rename",
+      handleOnClick: handleClickRename,
+    },
     selectedFolderId && {
       id: "delete",
       name: "Delete",
@@ -44,11 +52,31 @@ export default function MainContainer() {
     { id: "cut", name: "Cut" },
   ].filter(Boolean);
 
+  function handleClickRename() {
+    setRenameInput(true);
+    setOpen(false);
+    dispatch(selectFolder(selectedFolderId));
+    setTimeout(() => {
+      inputRef.current?.focus();
+    }, 0);
+  }
+
   const handleClickOutside = (event) => {
     if (boxRef.current && !boxRef.current.contains(event.target)) {
       setOpen(false);
       dispatch(deselectFolder());
     }
+  };
+
+  const handleFolderOutSideClick = (event) => {
+    if (folderRef.current && !folderRef.current.contains(event.target)) {
+      setOpen(false);
+    }
+  };
+
+  const inputBlur = () => {
+    setRenameInput(false);
+    dispatch(deselectFolder());
   };
 
   const handleContextMenu = (event, id) => {
@@ -58,16 +86,22 @@ export default function MainContainer() {
     setOpen(true);
   };
 
+  const folderNameChange = (event) => {
+    const value = event.target.value;
+  };
+
   useEffect(() => {
     if (!selectedFolderId) {
       document.addEventListener("contextmenu", handleContextMenu);
     }
+    document.addEventListener("click", handleFolderOutSideClick);
     document.addEventListener("click", handleClickOutside);
 
     return () => {
       if (!selectedFolderId) {
         document.removeEventListener("contextmenu", handleContextMenu);
       }
+      document.removeEventListener("click", handleFolderOutSideClick);
       document.removeEventListener("click", handleClickOutside);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -78,6 +112,7 @@ export default function MainContainer() {
       {folders.map((folder) => (
         <Box
           key={folder.id}
+          ref={folderRef}
           sx={{
             display: "grid",
             padding: "8px",
@@ -95,7 +130,18 @@ export default function MainContainer() {
               alt="folder_icon"
             />
           </span>
-          <span>{folder.name}</span>
+          {renameInput && selectedFolderId === folder.id ? (
+            <input
+              style={{ all: "unset", width: "78px" }}
+              disabled={!renameInput}
+              ref={inputRef}
+              onBlur={inputBlur}
+              value={folder.name}
+              onChange={folderNameChange}
+            />
+          ) : (
+            <span>{folder.name}</span>
+          )}
         </Box>
       ))}
 
