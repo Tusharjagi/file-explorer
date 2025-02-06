@@ -45,7 +45,7 @@ export default function MainContainer() {
     selectedFolderId && {
       id: "duplicate",
       name: "Duplicate",
-      handleOnClick: handleDuplicate,
+      handleOnClick: () => dispatch(duplicateFolder()),
     },
     selectedFolderId && {
       id: "delete",
@@ -58,10 +58,6 @@ export default function MainContainer() {
     { id: "copy", name: "Copy" },
     { id: "cut", name: "Cut" },
   ].filter(Boolean);
-
-  function handleDuplicate() {
-    dispatch(duplicateFolder());
-  }
 
   function handleClickRename() {
     setRenameInput(true);
