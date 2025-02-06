@@ -22,6 +22,9 @@ export default function MainContainer() {
   const [open, setOpen] = useState(false);
   const [renameInput, setRenameInput] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [selectedFolderIndex, setSelectedFolderIndex] = useState(
+    folders.findIndex((folder) => folder.id === selectedFolderId)
+  );
 
   const BUTTONS = [
     {
@@ -103,12 +106,29 @@ export default function MainContainer() {
     dispatch(renameFolder({ id: selectedFolderId, value: value }));
   };
 
+  const handleKeyDown = (event) => {
+    if (event.key === "Enter") {
+      inputBlur();
+    } else if (event.key === "ArrowLeft") {
+      if (selectedFolderIndex > 0) {
+        setSelectedFolderIndex(selectedFolderIndex - 1);
+        dispatch(selectFolder(folders[selectedFolderIndex - 1].id));
+      }
+    } else if (event.key === "ArrowRight") {
+      if (selectedFolderIndex < folders.length - 1) {
+        setSelectedFolderIndex(selectedFolderIndex + 1);
+        dispatch(selectFolder(folders[selectedFolderIndex + 1].id));
+      }
+    }
+  };
+
   useEffect(() => {
     if (!selectedFolderId) {
       document.addEventListener("contextmenu", handleContextMenu);
     }
     document.addEventListener("click", handleFolderOutSideClick);
     document.addEventListener("click", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
 
     return () => {
       if (!selectedFolderId) {
@@ -116,9 +136,10 @@ export default function MainContainer() {
       }
       document.removeEventListener("click", handleFolderOutSideClick);
       document.removeEventListener("click", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFolderId]);
+  }, [selectedFolderId, selectedFolderIndex]);
 
   return (
     <StyleMainContainer id="main-container">
@@ -152,6 +173,7 @@ export default function MainContainer() {
               onBlur={inputBlur}
               value={folder.name}
               onChange={folderNameChange}
+              onKeyDown={handleKeyDown}
             />
           ) : (
             <span className="folder_name">{folder.name}</span>
