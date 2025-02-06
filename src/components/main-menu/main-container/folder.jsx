@@ -7,6 +7,7 @@ import {
   renameFolder,
   selectFolder,
 } from "../../../store/slices/folderSlice";
+import { useDrag } from "react-dnd";
 
 export default function Folder({
   setOpen,
@@ -16,6 +17,8 @@ export default function Folder({
   renameInput,
   setPosition,
   inputRef,
+  index,
+  setDroppedIndex,
 }) {
   const folderRef = useRef();
   const dispatch = useDispatch();
@@ -31,6 +34,7 @@ export default function Folder({
     }
     document.addEventListener("click", handleFolderOutSideClick);
     document.addEventListener("keydown", handleKeyDown);
+    document.addEventListener("dragover", handleMouseOver);
 
     return () => {
       if (!selectedFolderId) {
@@ -38,9 +42,17 @@ export default function Folder({
       }
       document.removeEventListener("click", handleFolderOutSideClick);
       document.removeEventListener("keydown", handleKeyDown);
+      document.addEventListener("dragover", handleMouseOver);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFolderId, selectedFolderIndex]);
+
+  function handleMouseOver(event) {
+    const targetElement = event.target;
+    if (targetElement && targetElement.id) {
+      setDroppedIndex(Number(targetElement.id));
+    }
+  }
 
   function handleContextMenu(event, id) {
     event.preventDefault();
@@ -89,16 +101,33 @@ export default function Folder({
     dispatch(renameFolder({ id: selectedFolderId, value: value }));
   };
 
+  const [{ isDragging }, dragRef] = useDrag({
+    type: "FOLDER",
+    item: { indexFrom: index },
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
   return (
     <Box
       key={folder.id}
-      ref={folderRef}
+      ref={(node) => {
+        folderRef.current = node;
+        dragRef(node);
+      }}
       sx={{
         display: "grid",
         padding: "8px",
         borderRadius: "8px",
-        background: selectedFolderId === folder.id ? "var(--tran-blue)" : "",
+        background: isDragging
+          ? "var(--tran-blue)"
+          : selectedFolderId === folder.id
+          ? "var(--tran-blue)"
+          : "",
+        opacity: isDragging ? 0.5 : 1,
       }}
+      id={index}
       onContextMenu={(e) => handleContextMenu(e, folder.id)}
       onClick={handleFolderClick}
     >

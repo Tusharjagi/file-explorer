@@ -65,6 +65,22 @@ const folderSlice = createSlice({
       state.folders.push(duplicatedFolder);
       storeFolders(state.folders);
     },
+    repositionFolders: (state, action) => {
+      const { indexFrom, indexTo } = action.payload;
+      if (
+        indexFrom < 0 ||
+        indexTo < 0 ||
+        indexFrom >= state.folders.length ||
+        indexTo >= state.folders.length
+      ) {
+        console.error("Invalid indices");
+        return;
+      }
+      const folderToMove = state.folders[indexFrom];
+      state.folders.splice(indexFrom, 1);
+      state.folders.splice(indexTo, 0, folderToMove);
+      storeFolders(state.folders);
+    },
   },
 });
 
@@ -75,6 +91,7 @@ export const {
   deselectFolder,
   renameFolder,
   duplicateFolder,
+  repositionFolders,
 } = folderSlice.actions;
 
 export default folderSlice.reducer;

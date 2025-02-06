@@ -7,10 +7,12 @@ import {
   selectFolder,
   deselectFolder,
   duplicateFolder,
+  repositionFolders,
 } from "../../../store/slices/folderSlice";
 import { StyleButton, StyledBox, StyleMainContainer } from "./index.styled";
 import { BUTTONS_CONFIG } from "../../../utils/common";
 import Folder from "./folder";
+import { useDrop } from "react-dnd";
 
 export default function MainContainer() {
   const dispatch = useDispatch();
@@ -22,6 +24,7 @@ export default function MainContainer() {
   const [open, setOpen] = useState(false);
   const [renameInput, setRenameInput] = useState(false);
   const [position, setPosition] = useState({ x: 0, y: 0 });
+  const [droppedIndex, setDroppedIndex] = useState(0);
 
   function handleClickRename() {
     setRenameInput(true);
@@ -48,9 +51,16 @@ export default function MainContainer() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedFolderId]);
 
+  const [, dropRef] = useDrop({
+    accept: "FOLDER",
+    drop: ({ indexFrom }) => {
+      dispatch(repositionFolders({ indexFrom, indexTo: droppedIndex }));
+    },
+  });
+
   return (
-    <StyleMainContainer id="main-container">
-      {folders.map((folder) => (
+    <StyleMainContainer ref={dropRef}>
+      {folders.map((folder, index) => (
         <Folder
           key={folder.id}
           setOpen={setOpen}
@@ -60,6 +70,8 @@ export default function MainContainer() {
           renameInput={renameInput}
           setPosition={setPosition}
           inputRef={inputRef}
+          index={index}
+          setDroppedIndex={setDroppedIndex}
         />
       ))}
 
