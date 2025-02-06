@@ -11,7 +11,7 @@ const folderSlice = createSlice({
   reducers: {
     addFolder: (state) => {
       const newFolder = {
-        id: `folder-${state.folders.length + 1}`,
+        id: Date.now().toString(),
         name: "New Folder",
       };
       state.folders.push(newFolder);
@@ -28,9 +28,21 @@ const folderSlice = createSlice({
     deselectFolder: (state) => {
       state.selectedFolderId = null;
     },
+    renameFolder: (state, action) => {
+      const { id, value } = action.payload;
+      const folder = state.folders.find((folder) => folder.id === id);
+      if (folder) {
+        folder.name = value;
+      }
+    },
   },
 });
 
-export const { addFolder, deleteFolder, selectFolder, deselectFolder } =
-  folderSlice.actions;
+export const {
+  addFolder,
+  deleteFolder,
+  selectFolder,
+  deselectFolder,
+  renameFolder,
+} = folderSlice.actions;
 export default folderSlice.reducer;

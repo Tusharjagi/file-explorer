@@ -6,6 +6,7 @@ import {
   deleteFolder,
   selectFolder,
   deselectFolder,
+  renameFolder,
 } from "../../../store/slices/folderSlice";
 import { StyleButton, StyledBox, StyleMainContainer } from "./index.styled";
 
@@ -74,6 +75,11 @@ export default function MainContainer() {
     }
   };
 
+  const handleFolderClick = () => {
+    dispatch(selectFolder(null));
+    dispatch(deselectFolder());
+  };
+
   const inputBlur = () => {
     setRenameInput(false);
     dispatch(deselectFolder());
@@ -88,6 +94,7 @@ export default function MainContainer() {
 
   const folderNameChange = (event) => {
     const value = event.target.value;
+    dispatch(renameFolder({ id: selectedFolderId, value: value }));
   };
 
   useEffect(() => {
@@ -121,6 +128,7 @@ export default function MainContainer() {
               selectedFolderId === folder.id ? "var(--tran-blue)" : "",
           }}
           onContextMenu={(e) => handleContextMenu(e, folder.id)}
+          onClick={handleFolderClick}
         >
           <span>
             <img
@@ -132,7 +140,7 @@ export default function MainContainer() {
           </span>
           {renameInput && selectedFolderId === folder.id ? (
             <input
-              style={{ all: "unset", width: "78px" }}
+              style={{ all: "unset", width: "78px", textAlign: "center" }}
               disabled={!renameInput}
               ref={inputRef}
               onBlur={inputBlur}
@@ -140,7 +148,7 @@ export default function MainContainer() {
               onChange={folderNameChange}
             />
           ) : (
-            <span>{folder.name}</span>
+            <span style={{ textAlign: "center" }}>{folder.name}</span>
           )}
         </Box>
       ))}
