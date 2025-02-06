@@ -52,6 +52,7 @@ export default function MainContainer() {
     <StyleMainContainer id="main-container">
       {folders.map((folder) => (
         <Folder
+          key={folder.id}
           setOpen={setOpen}
           folder={folder}
           selectedFolderId={selectedFolderId}
