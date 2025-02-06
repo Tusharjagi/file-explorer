@@ -28,3 +28,12 @@ export const sideMenuItems = [
     ],
   },
 ];
+
+export const loadFolders = () => {
+  const savedFolders = localStorage.getItem("folders");
+  return savedFolders ? JSON.parse(savedFolders) : [];
+};
+
+export const storeFolders = (folders) => {
+  return window.localStorage.setItem("folders", JSON.stringify(folders));
+};
