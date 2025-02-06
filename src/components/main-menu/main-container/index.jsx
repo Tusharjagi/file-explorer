@@ -119,6 +119,9 @@ export default function MainContainer() {
         setSelectedFolderIndex(selectedFolderIndex + 1);
         dispatch(selectFolder(folders[selectedFolderIndex + 1].id));
       }
+    } else if (event.key === "Delete" && selectedFolderId) {
+      dispatch(deleteFolder());
+      setOpen(false);
     }
   };
 
