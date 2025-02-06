@@ -38,18 +38,29 @@ export default function MainContainer() {
   const handleClickOutside = (event) => {
     if (boxRef.current && !boxRef.current.contains(event.target)) {
       setOpen(false);
+      dispatch(selectFolder(null));
       dispatch(deselectFolder());
     }
   };
 
+  const handleContextMenu = () => {
+    setOpen(false);
+  };
+
   useEffect(() => {
     document.addEventListener("click", handleClickOutside);
+    if (selectedFolderId) {
+      document.addEventListener("contextmenu", handleContextMenu);
+    }
 
     return () => {
+      if (selectedFolderId) {
+        document.removeEventListener("contextmenu", handleContextMenu);
+      }
       document.removeEventListener("click", handleClickOutside);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedFolderId]);
+  }, []);
 
   const [, dropRef] = useDrop({
     accept: "FOLDER",
@@ -75,7 +86,12 @@ export default function MainContainer() {
         />
       ))}
 
-      <Modal open={open} onClose={() => setOpen(false)} hideBackdrop>
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        hideBackdrop
+        onContextMenu={handleContextMenu}
+      >
         <StyledBox ref={boxRef} sx={{ top: position.y, left: position.x }}>
           {BUTTONS_CONFIG(
             selectedFolderId,
