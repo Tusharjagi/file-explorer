@@ -9,8 +9,14 @@ export default function MainHeader() {
   return (
     <StyleMainHeader>
       <div className="forward_backward_icon">
-        <ArrowBackIosIosIcon fontSize="14px" />
-        <ArrowForwardIosIcon fontSize="14px" />
+        <ArrowBackIosIosIcon
+          fontSize="14px"
+          data-testid="ArrowBackIosIosIcon"
+        />
+        <ArrowForwardIosIcon
+          fontSize="14px"
+          data-testid="ArrowForwardIosIcon"
+        />
       </div>
       <div className="second_container">
         <div className="header_title">Download</div>
@@ -28,13 +34,20 @@ export default function MainHeader() {
               src="/icons/menu-bar.svg"
               height="20px"
               width="20px"
-              alt="square_icon"
+              alt="menu_bar_icon"
             />
           </span>
-          <AccessTimeFilledIcon className="icon" />
-          <SellIcon className="icon" />
+          <AccessTimeFilledIcon
+            className="icon"
+            data-testid="AccessTimeFilledIcon"
+          />
+          <SellIcon className="icon" data-testid="SellIcon" />
           <div className="search">
-            <SearchIcon className="icon" color="#414141" />
+            <SearchIcon
+              className="icon"
+              color="#414141"
+              data-testid="SearchIcon"
+            />
             Search
           </div>
         </div>
